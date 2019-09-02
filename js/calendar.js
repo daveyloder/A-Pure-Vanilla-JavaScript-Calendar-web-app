@@ -6,76 +6,80 @@ selectMonth = document.getElementById("month");
 
 months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-monthAndYear = document.getElementById(monthAndYear);
+monthAndYear = document.getElementById("monthAndYear");
 showCalendar(currentMonth, currentYear);
 
+
 function next() {
-	currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
-	currentMonth = (currentMonth + 1) % 12;
-	showCalendar(currentMonth, currentYear);
+    currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
+    currentMonth = (currentMonth + 1) % 12;
+    showCalendar(currentMonth, currentYear);
 }
 
 function previous() {
-	currentYear = (currentMonth === 0) ? currentYear - 1 : currentYear;
-	currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
-	showCalendar(currentMonth, currentYear);
+    currentYear = (currentMonth === 0) ? currentYear - 1 : currentYear;
+    currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
+    showCalendar(currentMonth, currentYear);
 }
 
 function jump() {
-	currentYear = parseInt(selectYear.value);
-	currentMonth = parseInt(selectMonth.value);
-	showCalendar(currentMonth, currentYear);
+    currentYear = parseInt(selectYear.value);
+    currentMonth = parseInt(selectMonth.value);
+    showCalendar(currentMonth, currentYear);
 }
 
 function showCalendar(month, year) {
 
-  let firstDay = (new Date(year, month)).getDay();
+    let firstDay = (new Date(year, month)).getDay();
 
-  tbl = document.getElementById("calendar-body"); // calendar body in html file
+    tbl = document.getElementById("calendar-body"); // body of the calendar
 
-  // clearing the previous cells in the table
-  tbl.innerHTML = "";
+    // clearing all previous cells
+    tbl.innerHTML = "";
 
-  //getting the info of month and in the page with the DOM.
-  monthAndYear.innerHTML = months[month] + " " + year;
-  selectYear.value = year;
-  selectMonth.value = month;
+    // filing data about month and in the page via DOM.
+    monthAndYear.innerHTML = months[month] + " " + year;
+    selectYear.value = year;
+    selectMonth.value = month;
 
+    // creating all cells
+    let date = 1;
+    for (let i = 0; i < 6; i++) {
+        // creates a table row
+        let row = document.createElement("tr");
 
-  // check how many days in a month
+        //creating individual cells, filing them up with data.
+        for (let j = 0; j < 7; j++) {
+            if (i === 0 && j < firstDay) {
+                cell = document.createElement("td");
+                cellText = document.createTextNode("");
+                cell.appendChild(cellText);
+                row.appendChild(cell);
+            }
+            else if (date > daysInMonth(month, year)) {
+                break;
+            }
 
-  daysInMonth(iMonth, iYear) {
-    return 32 - new Date(iYear, iMonth, 32).getDate();
-  }
-
-  let date = 1;
-  for (let i = 0; i < 6; i++) {
-    // creates table row
-    let row = document.createElement("tr");
-
-    //create individuakl cells in the table. Filling it with data.
-    for (let j = 0; j < 7; j++) {
-      if (i === 0 && j < firstDay) {
-        cell = document.createElement("td");
-        cellText = document.createTextNode("");
-        cell.appendChild(cellText);
-        row.appendChild(cell);
-      } else if (date > dateInMonth(month, year)) {
-        break;
-      } else {
-        cell = document.createElement("td");
-        cellText = document.createTextNode(date);
-        if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
-          cell.classList.add(“bg - info”);
-        } // highlight today’s date
-        cell.appendChild(cellText);
-        cell.appendChild(cell);
-        date++;
-      }
+            else {
+                cell = document.createElement("td");
+                cellText = document.createTextNode(date);
+                if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
+                    cell.classList.add("bg-info");
+                } // color today's date
+                cell.appendChild(cellText);
+                row.appendChild(cell);
+                date++;
+            }
 
 
+        }
+
+        tbl.appendChild(row); // appending each row into calendar body.
     }
 
-    tbl.appendChild(row); //appending each row into the calendar body.
-  }
 }
+
+
+// check how many days in a month code from https://dzone.com/articles/determining-number-days-month
+function daysInMonth(iMonth, iYear) {
+    return 32 - new Date(iYear, iMonth, 32).getDate();
